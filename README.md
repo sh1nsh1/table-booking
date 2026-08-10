@@ -1,36 +1,71 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Table Booking — онлайн-бронирование столика
 
-## Getting Started
+Форма онлайн-бронирования столика в ресторане с экраном подтверждения.
+Стек: Next.js 16 (App Router), React 19, TypeScript, CSS.
 
-First, run the development server:
+## Запуск локально
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Откройте [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Дополнительные команды:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run lint   # ESLint
+npm run build  # продакшен-сборка
+```
 
-## Learn More
+## Структура
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/
+  app/
+    page.tsx              # главная страница: переключение форма ↔ подтверждение
+    page.css              # раскладка страницы
+    layout.tsx            # корневой layout (lang="ru", метаданные)
+    globals.css           # токены цветов, сброс, общие стили (кнопка, анимация)
+  components/
+    BookingForm.tsx       # форма бронирования + валидация + лоадер
+    BookingForm.css       # стили формы
+    ConfirmationScreen.tsx# экран подтверждения с деталями брони
+    ConfirmationScreen.css# стили экрана подтверждения
+  lib/
+    validation.ts         # правила валидации, слоты времени, задержка отправки
+  types/
+    booking.ts            # типы BookingFormData, BookingStatus, FormErrors
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Функциональность
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Поля: имя гостя, телефон, дата, время, количество гостей (1–12). Все обязательные.
+- Время — только слоты с 12:00 до 22:00 с шагом 1 час.
+- Валидация при отправке и при потере фокуса (`onBlur`). Ошибки — красным текстом
+  под полем, поле подсвечивается красной обводкой. Телефон: +7 или 8 + 10 цифр;
+  в поле вводятся только цифры, номер автоматически форматируется
+  в вид +7 (XXX) XXX-XX-XX (если первая цифра не 7/8 — +7 подставляется сам).
+  Дата — не раньше сегодняшнего дня.
+- Отправка имитируется через `setTimeout` (1.5 с): на кнопке спиннер и текст
+  «Бронирую…», кнопка заблокирована.
+- После отправки — экран подтверждения с деталями брони и кнопкой
+  «Забронировать ещё», которая возвращает к пустой форме.
+- Адаптивная вёрстка: карточка корректно отображается от 375 px до 1280 px.
 
-## Deploy on Vercel
+## Принятые решения
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Валидация вынесена в отдельный модуль `lib/validation.ts` — правила не зависят
+  от React, их легко переиспользовать и тестировать отдельно.
+- Стили — на обычном CSS: токены цветов лежат
+  в `globals.css`, стили каждого компонента — в соседнем `.css` файле с БЭМ-подобными
+  классами. Медиа-запрос `min-width: 640px` отвечает за адаптивность.
+- Состояние «успеха» поднято на уровень страницы: форма отвечает только за свою
+  отправку (idle/loading), а страница переключает экраны. Это избавляет
+  компоненты от лишних связей, а повторное бронирование просто сбрасывает форму
+  за счёт размонтирования.
+- Время и количество гостей — через `<select>`: это гарантирует, что в форму
+  попадут только допустимые значения, и упрощает мобильный UX.
+- Отправка имитируется через `setTimeout` внутри `useEffect` с очисткой таймера —
+  таймер не «протечёт» при размонтировании формы.

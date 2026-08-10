@@ -1,0 +1,132 @@
+.form-card {
+  background: #ffffff;
+  border: 1px solid var(--hairline);
+  border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(26, 26, 26, 0.06);
+  padding: 24px;
+  animation: fade-in-up 0.4s ease-out both;
+}
+
+@media (min-width: 640px) {
+  .form-card {
+    padding: 40px;
+  }
+}
+
+.form-card__header {
+  margin-bottom: 32px;
+}
+
+.form-card__overline {
+  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+}
+
+.form-card__title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+@media (min-width: 640px) {
+  .form-card__title {
+    font-size: 30px;
+  }
+}
+
+.form-card__subtitle {
+  margin: 8px 0 0;
+  color: var(--muted);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Дата и время — в два столбца на десктопе. */
+.form__row {
+  display: grid;
+  gap: 20px;
+}
+
+@media (min-width: 640px) {
+  .form__row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field__label {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.field__control {
+  width: 100%;
+  border: 1px solid var(--hairline);
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 10px 14px;
+  font-size: 16px;
+  color: var(--foreground);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.field__control::placeholder {
+  color: var(--muted);
+}
+
+.field__control:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(200, 150, 62, 0.2);
+}
+
+.field__control--invalid,
+.field__control--invalid:focus {
+  border-color: var(--error);
+}
+
+.field__control--invalid:focus {
+  box-shadow: 0 0 0 2px rgba(196, 54, 44, 0.2);
+}
+
+.field__control:disabled {
+  opacity: 0.6;
+}
+
+.field__error {
+  /* Высота слота резервируется всегда — появление ошибки не сдвигает форму. */
+  min-height: 1.4em;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--error);
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(26, 26, 26, 0.25);
+  border-top-color: var(--foreground);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
